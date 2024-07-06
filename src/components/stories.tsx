@@ -33,7 +33,7 @@ const Stories = () => {
 export default Stories;
 
 interface renderStoryProps {
-  item: { imageUri: string; name: string };
+  item: StoryProps;
 }
 
 const renderStory = (props: renderStoryProps) => {
