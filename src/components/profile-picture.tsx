@@ -1,4 +1,4 @@
-import { Image, ImageProps, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import React from "react";
 import { COLORS } from "../assets";
 
@@ -14,7 +14,7 @@ export default ProfilePicture;
 
 const styles = StyleSheet.create({
   container: {
-    margin: 10,
+    margin: 5,
     height: 86,
     width: 86,
     borderWidth: 2.5,
