@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   label: {
-    color: COLORS.gray,
+    color: COLORS.lightBlack,
     paddingBottom: 10,
   },
   selectedTab: {
