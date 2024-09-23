@@ -1,10 +1,10 @@
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import React from "react";
 import { Body, Footer, Header } from "./elements";
 
 const Post = ({ postData }: any) => {
   return (
-    <View>
+    <View style={styles.postContainer}>
       <Header
         imageUri={postData?.owner?.picture}
         name={postData?.owner?.firstName}
@@ -16,3 +16,9 @@ const Post = ({ postData }: any) => {
 };
 
 export default Post;
+
+const styles = StyleSheet.create({
+  postContainer: {
+    marginTop: 10,
+  },
+});
