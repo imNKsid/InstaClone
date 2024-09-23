@@ -1,6 +1,6 @@
 import { Image, SafeAreaView, ScrollView } from "react-native";
 import React, { useEffect } from "react";
-import { Post, Stories } from "../../components";
+import { Feed, Stories } from "../../components";
 import { IMAGES } from "../../assets";
 import { Styles } from "./style";
 import UsersThunk from "../../redux/ducks/users/users-thunk";
@@ -23,7 +23,7 @@ const Home = () => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <Image source={IMAGES.logo} style={Styles.mainLogo} />
         <Stories usersData={usersData} />
-        <Post postData={postsData} />
+        <Feed postsData={postsData} />
       </ScrollView>
     </SafeAreaView>
   );
