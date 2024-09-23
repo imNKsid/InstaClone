@@ -6,11 +6,11 @@ const Post = ({ postData }: any) => {
   return (
     <View>
       <Header
-        imageUri={postData[0]?.owner?.picture}
-        name={postData[0]?.owner?.firstName}
+        imageUri={postData?.owner?.picture}
+        name={postData?.owner?.firstName}
       />
-      <Body imageUri={postData[0]?.image} />
-      <Footer postData={postData[0]} />
+      <Body imageUri={postData?.image} />
+      <Footer postData={postData} />
     </View>
   );
 };
