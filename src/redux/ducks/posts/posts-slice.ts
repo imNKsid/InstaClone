@@ -5,6 +5,9 @@ const initialState = {
   fetchPostSuccess: false,
   fetchPostLoading: false,
   postsData: [],
+  fetchStoriesLoading: false,
+  fetchStoriesSuccess: false,
+  storiesData: [],
 };
 
 const PostsSlice = createSlice({
@@ -29,6 +32,24 @@ const PostsSlice = createSlice({
         state.fetchPostSuccess = false;
         state.fetchPostLoading = false;
         state.postsData = [];
+      })
+      .addCase(PostsThunk.getPostsByUserId.pending, (state) => {
+        state.fetchStoriesLoading = true;
+        state.fetchStoriesSuccess = false;
+        state.storiesData = [];
+      })
+      .addCase(PostsThunk.getPostsByUserId.fulfilled, (state, action) => {
+        state.fetchStoriesLoading = false;
+        state.fetchStoriesSuccess = true;
+        const data = action.payload;
+        const lastThree = data.length > 3 ? data.slice(-3) : data;
+
+        state.storiesData = lastThree;
+      })
+      .addCase(PostsThunk.getPostsByUserId.rejected, (state) => {
+        state.fetchStoriesLoading = false;
+        state.fetchStoriesSuccess = false;
+        state.storiesData = [];
       });
   },
 });
