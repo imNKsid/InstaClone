@@ -17,4 +17,5 @@ export const IMAGES = {
   send: require("./send.png"),
   saveEmpty: require("./save-empty.png"),
   saveFilled: require("./save-filled.png"),
+  bluePlus: require("./plus-blue.png"),
 };
