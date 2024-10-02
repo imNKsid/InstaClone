@@ -6,6 +6,11 @@ const postsData = (): any => {
   return postsData;
 };
 
-const PostsSelector = { postsData };
+const storiesData = (): any => {
+  const storiesData = useSelector((state: RootState) => state.post.storiesData);
+  return storiesData;
+};
+
+const PostsSelector = { postsData, storiesData };
 
 export default PostsSelector;
