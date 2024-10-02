@@ -4,7 +4,7 @@ import { COLORS } from "../assets";
 
 interface ProfilePictureProps {
   uri: string;
-  size: number;
+  size?: number;
 }
 
 const ProfilePicture = (props: ProfilePictureProps) => {
