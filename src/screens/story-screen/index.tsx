@@ -1,26 +1,35 @@
 import {
   ActivityIndicator,
+  Animated,
   Image,
+  ImageBackground,
   SafeAreaView,
+  Text,
+  TextInput,
+  TouchableOpacity,
   TouchableWithoutFeedback,
+  View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
 import {
   StackActions,
   useNavigation,
   useRoute,
 } from "@react-navigation/native";
+
 import { Styles } from "./style";
 import PostsSelector from "../../redux/ducks/posts/posts-selector";
 import UserSelector from "../../redux/ducks/users/users-selector";
-import { WindowDimensions } from "../../utils";
+import { timeDifferenceFromNow, WindowDimensions } from "../../utils";
 import PostsThunk from "../../redux/ducks/posts/posts-thunk";
 import { dispatch } from "../../redux/store/store";
+import { ProfilePicture } from "../../components";
+import { COLORS, IMAGES } from "../../assets";
 
 const StoryScreen = () => {
   const navigation = useNavigation();
   const routes: any = useRoute();
-  // console.log("routes =>", JSON.stringify(routes?.params?.userId));
 
   const storiesData = PostsSelector.storiesData();
   const usersData = UserSelector.usersData();
@@ -28,13 +37,14 @@ const StoryScreen = () => {
   const currentIndex = usersData.findIndex(
     (user: any) => user.id === routes?.params?.userId
   );
-  // console.log("currentIndex =>", currentIndex);
 
-  // console.log("storiesData =>", JSON.stringify(storiesData));
+  const progressAnims = useRef<Animated.Value[]>([]).current;
 
   const [loading, setLoading] = useState(true);
   const [activeStoryIndex, setActiveStoryIndex] = useState(0);
   const [activeStory, setActiveStory] = useState<any>(null);
+  const [msg, setMsg] = useState("");
+  const [isLiked, setIsLiked] = useState(false);
 
   useEffect(() => {
     if (loading || !activeStory?.image) {
@@ -58,7 +68,44 @@ const StoryScreen = () => {
     }
 
     setActiveStory(storiesData[activeStoryIndex]);
+    startProgressBar(activeStoryIndex);
   }, [activeStoryIndex, storiesData]);
+
+  useEffect(() => {
+    if (storiesData.length > 0) {
+      // Reset the progressAnims array every time storiesData changes
+      progressAnims.length = 0; // Clear the existing array
+      storiesData.forEach(() => {
+        progressAnims.push(new Animated.Value(0)); // Add one Animated.Value per story
+      });
+      startProgressBar(0);
+    }
+  }, [storiesData]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleNext();
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [activeStoryIndex]);
+
+  // Start the animation for the progress bar
+  const startProgressBar = (index: number) => {
+    if (progressAnims[index] !== undefined) {
+      progressAnims[index].setValue(0); // Reset the animation
+      Animated.timing(progressAnims[index], {
+        toValue: 1, // Animate the progress bar to full width (1 means full width)
+        duration: 5000,
+        useNativeDriver: false, // We're animating the width
+      }).start(() => {
+        // When the 1st animation completes, go to the next story
+        if (index === 0) {
+          setActiveStoryIndex(index + 1); // Move to next story
+        }
+      });
+    }
+  };
 
   const showNextUserStories = () => {
     const newUserId = usersData[currentIndex + 1].id;
@@ -82,7 +129,6 @@ const StoryScreen = () => {
 
   const handleNext = () => {
     if (activeStoryIndex >= storiesData.length - 1) {
-      showNextUserStories();
       return;
     }
     setActiveStoryIndex(activeStoryIndex + 1);
@@ -94,6 +140,7 @@ const StoryScreen = () => {
       return;
     }
     setActiveStoryIndex(activeStoryIndex - 1);
+    progressAnims[activeStoryIndex].setValue(0);
   };
 
   const handlePress = (e: any) => {
@@ -102,18 +149,82 @@ const StoryScreen = () => {
     if (x < WindowDimensions.WIDTH / 2) {
       handlePrev();
     } else {
+      if (activeStoryIndex >= storiesData.length - 1) {
+        showNextUserStories();
+        return;
+      }
       handleNext();
     }
   };
+  // console.log("activeStory =>", JSON.stringify(activeStory));
 
   return (
     <SafeAreaView style={Styles.container}>
       {!activeStory?.image || loading ? (
         <ActivityIndicator style={Styles.loader} />
-      ) : null}
-      <TouchableWithoutFeedback onPress={handlePress}>
-        <Image source={{ uri: activeStory?.image }} style={Styles.storyImage} />
-      </TouchableWithoutFeedback>
+      ) : (
+        <>
+          <TouchableWithoutFeedback onPress={handlePress}>
+            <ImageBackground
+              source={{ uri: activeStory?.image }}
+              style={Styles.storyImage}
+            >
+              <View style={Styles.progressBarsContainer}>
+                {storiesData.map((_story: any, index: number) => (
+                  <View key={index} style={Styles.progressBarContainer}>
+                    <Animated.View
+                      style={[
+                        Styles.progressBar,
+                        {
+                          width: progressAnims[index].interpolate({
+                            inputRange: [0, 1],
+                            outputRange: ["0%", "100%"],
+                          }),
+                        },
+                      ]}
+                    />
+                  </View>
+                ))}
+              </View>
+              <View style={Styles.userInfo}>
+                <ProfilePicture uri={activeStory?.owner?.picture} size={40} />
+                <Text style={Styles.userName}>
+                  {activeStory?.owner?.firstName}
+                </Text>
+                <Text style={Styles.postedTime}>
+                  {timeDifferenceFromNow(activeStory?.publishDate)}
+                </Text>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.dispatch(
+                      StackActions.push("Bottom", { screen: "Home" })
+                    )
+                  }
+                  style={Styles.cross}
+                >
+                  <Image source={IMAGES.cross} style={Styles.crossImg} />
+                </TouchableOpacity>
+              </View>
+            </ImageBackground>
+          </TouchableWithoutFeedback>
+          <View style={Styles.footerActions}>
+            <TextInput
+              placeholder={"Send Message"}
+              placeholderTextColor={COLORS.black}
+              value={msg}
+              onChangeText={(t) => setMsg(t)}
+              style={Styles.msgField}
+            />
+            <TouchableOpacity onPress={() => setIsLiked(!isLiked)}>
+              <Image
+                source={isLiked ? IMAGES.heartFilled : IMAGES.heartEmpty}
+                style={Styles.heartImg}
+              />
+            </TouchableOpacity>
+            <Image source={IMAGES.send} style={Styles.heartImg} />
+          </View>
+        </>
+      )}
     </SafeAreaView>
   );
 };
