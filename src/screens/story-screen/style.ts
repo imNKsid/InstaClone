@@ -8,7 +8,7 @@ export const Styles = StyleSheet.create({
   },
   loader: {
     flex: 1,
-    marginTop: WindowDimensions.HEIGHT / 2,
+    marginTop: 50,
   },
   storyImage: {
     width: WindowDimensions.WIDTH,
