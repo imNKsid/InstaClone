@@ -27,6 +27,8 @@ import { dispatch } from "../../redux/store/store";
 import { ProfilePicture } from "../../components";
 import { COLORS, IMAGES } from "../../assets";
 
+const ANIMATION_DURATION = 5000;
+
 const StoryScreen = () => {
   const navigation = useNavigation();
   const routes: any = useRoute();
@@ -84,8 +86,8 @@ const StoryScreen = () => {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      handleNext();
-    }, 5000);
+      handleStoryChange("next");
+    }, ANIMATION_DURATION);
 
     return () => clearTimeout(timer);
   }, [activeStoryIndex]);
@@ -96,7 +98,7 @@ const StoryScreen = () => {
       progressAnims[index].setValue(0); // Reset the animation
       Animated.timing(progressAnims[index], {
         toValue: 1, // Animate the progress bar to full width (1 means full width)
-        duration: 5000,
+        duration: ANIMATION_DURATION,
         useNativeDriver: false, // We're animating the width
       }).start(() => {
         // When the 1st animation completes, go to the next story
@@ -127,36 +129,29 @@ const StoryScreen = () => {
     );
   };
 
-  const handleNext = () => {
-    if (activeStoryIndex >= storiesData.length - 1) {
-      return;
-    }
-    setActiveStoryIndex(activeStoryIndex + 1);
-  };
+  const handleStoryChange = (direction: "next" | "prev") => {
+    const newIndex =
+      direction === "next" ? activeStoryIndex + 1 : activeStoryIndex - 1;
 
-  const handlePrev = () => {
-    if (activeStoryIndex <= 0) {
-      showPrevUserStories();
-      return;
+    if (newIndex >= 0 && newIndex < storiesData.length) {
+      setActiveStoryIndex(newIndex);
+      progressAnims[newIndex].setValue(0); // Reset the new story's progress
+    } else if (direction === "next" && newIndex === storiesData.length) {
+      showNextUserStories(); // Go to next user’s story if all stories are done
+    } else if (direction === "prev" && newIndex < 0) {
+      showPrevUserStories(); // Go to previous user’s story if we're at the first
     }
-    setActiveStoryIndex(activeStoryIndex - 1);
-    progressAnims[activeStoryIndex].setValue(0);
   };
 
   const handlePress = (e: any) => {
     const x = e.nativeEvent.locationX;
 
     if (x < WindowDimensions.WIDTH / 2) {
-      handlePrev();
+      handleStoryChange("prev");
     } else {
-      if (activeStoryIndex >= storiesData.length - 1) {
-        showNextUserStories();
-        return;
-      }
-      handleNext();
+      handleStoryChange("next");
     }
   };
-  // console.log("activeStory =>", JSON.stringify(activeStory));
 
   return (
     <SafeAreaView style={Styles.container}>
