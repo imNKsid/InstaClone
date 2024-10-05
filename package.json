@@ -5,7 +5,7 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "ios15": "react-native run-ios '--simulator=iPhone 15 Plus'",
+    "ios15": "react-native run-ios '--udid=DAE770AE-8E12-4863-AF31-3A8E3511949F'",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
@@ -15,6 +15,7 @@
     "iOSpodInstall": "cd ios && pod install"
   },
   "dependencies": {
+    "@giphy/react-native-sdk": "^3.3.0",
     "@react-native-async-storage/async-storage": "^1.19.4",
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
