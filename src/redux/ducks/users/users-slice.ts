@@ -18,7 +18,7 @@ const UsersSlice = createSlice({
       .addCase(UsersThunk.getAllUsers.pending, (state) => {
         state.fetchUserSuccess = false;
         state.fetchUserLoading = true;
-        state.usersData = [];
+        // state.usersData = [];
       })
       .addCase(UsersThunk.getAllUsers.fulfilled, (state, action) => {
         state.fetchUserSuccess = true;

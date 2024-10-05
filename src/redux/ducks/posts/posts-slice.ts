@@ -21,7 +21,7 @@ const PostsSlice = createSlice({
       .addCase(PostsThunk.getAllPosts.pending, (state) => {
         state.fetchPostSuccess = false;
         state.fetchPostLoading = true;
-        state.postsData = [];
+        // state.postsData = [];
       })
       .addCase(PostsThunk.getAllPosts.fulfilled, (state, action) => {
         state.fetchPostSuccess = true;
