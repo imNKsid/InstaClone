@@ -19,4 +19,5 @@ export const IMAGES = {
   saveFilled: require("./save-filled.png"),
   bluePlus: require("./plus-blue.png"),
   cross: require("./cross.png"),
+  search: require("./search.png"),
 };
