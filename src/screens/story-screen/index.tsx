@@ -84,14 +84,6 @@ const StoryScreen = () => {
     }
   }, [storiesData]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      handleStoryChange("next");
-    }, ANIMATION_DURATION);
-
-    return () => clearTimeout(timer);
-  }, [activeStoryIndex]);
-
   // Start the animation for the progress bar
   const startProgressBar = (index: number) => {
     if (progressAnims[index] !== undefined) {
@@ -135,7 +127,12 @@ const StoryScreen = () => {
 
     if (newIndex >= 0 && newIndex < storiesData.length) {
       setActiveStoryIndex(newIndex);
-      progressAnims[newIndex].setValue(0); // Reset the new story's progress
+      if (direction === "next") {
+        progressAnims[activeStoryIndex].setValue(1); // On next click, complete the story's progress
+      }
+      if (direction === "prev") {
+        progressAnims[activeStoryIndex].setValue(0); // On prev click, reset the story's progress
+      }
     } else if (direction === "next" && newIndex === storiesData.length) {
       showNextUserStories(); // Go to next user’s story if all stories are done
     } else if (direction === "prev" && newIndex < 0) {
