@@ -18,4 +18,5 @@ export const IMAGES = {
   saveEmpty: require("./save-empty.png"),
   saveFilled: require("./save-filled.png"),
   bluePlus: require("./plus-blue.png"),
+  cross: require("./cross.png"),
 };
